@@ -51,8 +51,17 @@ else
   AC_MSG_RESULT(no)
 fi
 
+AC_MSG_CHECKING(for OpenBSD)
+if test "$(uname)" = "OpenBSD"; then
+  bobsd=true
+  AC_MSG_RESULT(compile in OpenBSD)
+  AC_DEFINE([__OPENBSD__], 1, [building for OpenBSD])
+else
+  AC_MSG_RESULT(no)
+fi
+
 AC_MSG_CHECKING(for Linux)
-if test "$bmac" != "true" -a "$bwin32" != "true"; then
+if test "$bmac" != "true" -a "$bwin32" != "true" -a "$bobsd" != "true" ; then
   blinux=true
   AC_MSG_RESULT(compile in linux)
 else
@@ -105,6 +114,9 @@ if test "$bwin32" != true; then
   if test "$bmac" = true; then
   AC_CHECK_LIB(c, uuid_generate, [echo "found library uuid"],
           AC_MSG_ERROR([*** Unable to find uuid_generate in libc]), )
+  elif test "$bobsd" = true; then
+  AC_CHECK_LIB(c, uuid_create, [echo "found uuid in libc"], 
+          AC_MSG_ERROR([*** Unable to find uuid_create in libc]), )
   else
   AC_CHECK_LIB(uuid, uuid_generate, [echo "found library uuid"],
           AC_MSG_ERROR([*** Unable to find uuid library]), )
@@ -157,6 +169,19 @@ elif test "$bmac" = true ; then
   LIB_MAC="-framework CoreServices"
   LIB_CRYPT32=
   LIB_ICONV=-liconv
+elif test "$bobsd" = true ; then
+  LIB_WS32=
+  LIB_GDI32=
+  LIB_RT=
+  LIB_INTL=
+  LIB_RESOLV=
+  LIB_UUID=
+  LIB_IPHLPAPI=
+  LIB_SHELL32=
+  LIB_PSAPI=
+  LIB_MAC=
+  MSVC_CFLAGS=
+  LIB_CRYPT32=
 else
   LIB_WS32=
   LIB_GDI32=

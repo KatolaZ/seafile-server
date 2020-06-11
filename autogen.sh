@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/local/bin/bash
 # Run this to generate all the initial makefiles, etc.
 
 : ${AUTOCONF=autoconf}
